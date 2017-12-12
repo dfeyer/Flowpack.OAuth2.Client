@@ -1,4 +1,5 @@
 <?php
+
 namespace Flowpack\OAuth2\Client\Endpoint;
 
 /*
@@ -13,17 +14,18 @@ namespace Flowpack\OAuth2\Client\Endpoint;
 
 use Flowpack\OAuth2\Client\Exception as OAuth2Exception;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Client\CurlEngine;
+use Neos\Flow\Http\Client\CurlEngineException;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Uri;
 use Neos\Utility\Arrays;
 
-/**
- */
 abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Http\Client\CurlEngine
+     * @var CurlEngine
      */
     protected $requestEngine;
 
@@ -33,23 +35,19 @@ abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
     protected $endpointUri;
 
     /**
-     * The client identifier as per http://tools.ietf.org/html/rfc6749#section-2.2
-     * Filled via Objects.yaml
-     *
-     *@var string
+     * @var string
+     * @see http://tools.ietf.org/html/rfc6749#section-2.2
      */
     protected $clientIdentifier;
 
     /**
-     * The client secret as per http://tools.ietf.org/html/rfc6749#section-2.3.1
-     * Filled via Objects.yaml
-     *
-     *@var string
+     * @var string
+     * @see http://tools.ietf.org/html/rfc6749#section-2.3.1
      */
     protected $clientSecret;
 
     /**
-    */
+     */
     protected function initializeObject()
     {
         $this->requestEngine->setOption(CURLOPT_CAINFO, FLOW_PATH_PACKAGES . 'Application/Flowpack.OAuth2.Client/Resources/Private/cacert.pem');
@@ -64,15 +62,15 @@ abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
      * @param string $clientIdentifier REQUIRED, if the client is not authenticating with the authorization server as described in Section 3.2.1.
      * @return mixed
      * @see http://tools.ietf.org/html/rfc6749#section-4.1.3
+     * @throws OAuth2Exception
      */
     public function requestAuthorizationCodeGrantAccessToken($code, $redirectUri = null, $clientIdentifier = null)
     {
-        $accessToken = $this->requestAccessToken(TokenEndpointInterface::GRANT_TYPE_AUTHORIZATION_CODE, array(
+        return $this->requestAccessToken(TokenEndpointInterface::GRANT_TYPE_AUTHORIZATION_CODE, [
             'code' => $code,
             'redirect_uri' => $redirectUri,
             'client_id' => $clientIdentifier
-        ));
-        return $accessToken;
+        ]);
     }
 
     /**
@@ -84,7 +82,7 @@ abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
      * @return mixed
      * @see http://tools.ietf.org/html/rfc6749#section-4.3.2
      */
-    public function requestResourceOwnerPasswordCredentialsGrantAccessToken($username, $password, $scope = array())
+    public function requestResourceOwnerPasswordCredentialsGrantAccessToken($username, $password, $scope = [])
     {
         // TODO: Implement requestResourceOwnerPasswordCredentialsGrantAccessToken() method.
     }
@@ -95,11 +93,11 @@ abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
      * @param array $scope The scope of the access request as described by http://tools.ietf.org/html/rfc6749#section-3.3
      * @return mixed
      * @see http://tools.ietf.org/html/rfc6749#section-4.4.2
+     * @throws OAuth2Exception
      */
-    public function requestClientCredentialsGrantAccessToken($scope = array())
+    public function requestClientCredentialsGrantAccessToken($scope = [])
     {
-        $accessToken = $this->requestAccessToken(TokenEndpointInterface::GRANT_TYPE_CLIENT_CREDENTIALS, $scope);
-        return $accessToken;
+        return $this->requestAccessToken(TokenEndpointInterface::GRANT_TYPE_CLIENT_CREDENTIALS, $scope);
     }
 
     /**
@@ -117,19 +115,23 @@ abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
      * @throws \Flowpack\OAuth2\Client\Exception
      * @see http://tools.ietf.org/html/rfc6749#section-4.1.3
      */
-    protected function requestAccessToken($grantType, $additionalParameters = array())
+    protected function requestAccessToken($grantType, $additionalParameters = [])
     {
-        $parameters = array(
+        $parameters = [
             'grant_type' => $grantType,
             'client_id' => $this->clientIdentifier,
             'client_secret' => $this->clientSecret
-        );
+        ];
         $parameters = Arrays::arrayMergeRecursiveOverrule($parameters, $additionalParameters, false, false);
 
         $request = Request::create(new Uri($this->endpointUri), 'POST', $parameters);
         $request->setHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-        $response = $this->requestEngine->sendRequest($request);
+        try {
+            $response = $this->requestEngine->sendRequest($request);
+        } catch (\Exception $exception) {
+            throw new OAuth2Exception('Unable to send the request', 1383749752, $exception);
+        }
 
         if ($response->getStatusCode() !== 200) {
             throw new OAuth2Exception(sprintf('The response when requesting the access token was not as expected, code and message was: %d %s', $response->getStatusCode(), $response->getContent()), 1383749757);

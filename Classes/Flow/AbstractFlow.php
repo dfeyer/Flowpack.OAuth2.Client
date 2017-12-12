@@ -11,6 +11,7 @@ namespace Flowpack\OAuth2\Client\Flow;
  * source code.
  */
 
+use Flowpack\OAuth2\Client\Exception;
 use Flowpack\OAuth2\Client\Token\AbstractClientToken;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -152,5 +153,13 @@ abstract class AbstractFlow implements FlowInterface
             }
         }
         return null;
+    }
+
+    /**
+     * @param AbstractClientToken $token
+     */
+    protected function initializeUserData(AbstractClientToken $token)
+    {
+
     }
 }
