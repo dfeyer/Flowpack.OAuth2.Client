@@ -1,6 +1,6 @@
 {
     "name": "flowpack/oauth2-client",
-    "description": "An OAuth 2.0 authorization framework client for the web application framework Neos Flow Framework.",
+    "description": "An OAuth 2.0 authorization framework client for Flow Framework.",
     "keywords": [
         "OAuth2",
         "Flow",
@@ -20,6 +20,10 @@
     ],
     "require": {
         "typo3/flow": "^4.0"
+    },
+    "suggest": {
+        "flowpack/oauth2-client-facebook": "Facebook OAuth Support",
+        "flowpack/oauth2-client-google": "Google OAuth Support"
     },
     "autoload": {
         "psr-4": {
