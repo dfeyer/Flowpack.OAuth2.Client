@@ -1,4 +1,5 @@
 <?php
+
 namespace Flowpack\OAuth2\Client\Token;
 
 /*
@@ -11,29 +12,31 @@ namespace Flowpack\OAuth2\Client\Token;
  * source code.
  */
 
+use Flowpack\OAuth2\Client\Endpoint\Resolver;
 use Flowpack\OAuth2\Client\Endpoint\TokenEndpointInterface;
 use Flowpack\OAuth2\Client\Exception;
+use Flowpack\OAuth2\Client\UriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SecurityLoggerInterface;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 
-/**
- */
 abstract class AbstractClientToken extends AbstractToken
 {
     /**
      * @Flow\Inject
-     * @var \Flowpack\OAuth2\Client\Endpoint\Resolver
+     * @var Resolver
      */
     protected $endpointResolver;
 
     /**
      * @Flow\Inject
-     * @var \Flowpack\OAuth2\Client\UriBuilder
+     * @var UriBuilder
      */
-    protected $oauthUriBuilder;
+    protected $uriBuilder;
 
     /**
      * @Flow\Inject
@@ -49,7 +52,7 @@ abstract class AbstractClientToken extends AbstractToken
     /**
      * @var array
      */
-    protected $credentials = array('accessToken' => null);
+    protected $credentials = ['accessToken' => null];
 
     /**
      * The $this->authenticationProviderName property is either known when in session
@@ -73,6 +76,7 @@ abstract class AbstractClientToken extends AbstractToken
      * @param ActionRequest $actionRequest The current request instance
      * @throws \InvalidArgumentException
      * @return boolean TRUE if this token needs to be (re-)authenticated
+     * @throws InvalidAuthenticationStatusException
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {
@@ -81,13 +85,14 @@ abstract class AbstractClientToken extends AbstractToken
             return;
         }
 
-        if (!$actionRequest->hasArgument('code')) {
+        try {
+            $code = $actionRequest->getArgument('code');
+        } catch (NoSuchArgumentException $exception) {
             $this->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             $this->securityLogger->log('There was no argument `code` provided.', LOG_NOTICE);
             return;
         }
-        $code = $actionRequest->getArgument('code');
-        $redirectUri = $this->oauthUriBuilder->getRedirectionEndpointUri($this->authenticationProviderName);
+        $redirectUri = $this->uriBuilder->getRedirectionEndpointUri($this->authenticationProviderName);
         try {
             //            $this->credentials['accessToken'] = $this->tokenEndpoint->requestAuthorizationCodeGrantAccessToken($code, $redirectUri);
             $this->credentials = $this->tokenEndpoint->requestAuthorizationCodeGrantAccessToken($code, $redirectUri);
