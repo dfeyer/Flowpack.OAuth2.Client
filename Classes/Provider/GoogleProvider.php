@@ -18,7 +18,6 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
-
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
@@ -26,7 +25,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  */
 class GoogleProvider extends AbstractClientProvider
 {
-
     /**
      * @Flow\Inject
      * @var SecurityLoggerInterface

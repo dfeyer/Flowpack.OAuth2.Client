@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  */
 interface TokenEndpointInterface
 {
-
     const GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
     const GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
 

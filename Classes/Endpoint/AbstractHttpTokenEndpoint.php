@@ -21,7 +21,6 @@ use Neos\Utility\Arrays;
  */
 abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
 {
-
     /**
      * @Flow\Inject
      * @var \Neos\Flow\Http\Client\CurlEngine
@@ -140,7 +139,7 @@ abstract class AbstractHttpTokenEndpoint implements TokenEndpointInterface
         // google returns json
         // facebook an string with parameters
         parse_str($response->getContent(), $responseComponentsParsedString);
-        if (!array_key_exists('access_token', $responseComponentsParsedString)){
+        if (!array_key_exists('access_token', $responseComponentsParsedString)) {
             $responseComponents = $response->getContent();
             $responseComponents = json_decode($responseComponents, true);
         } else {

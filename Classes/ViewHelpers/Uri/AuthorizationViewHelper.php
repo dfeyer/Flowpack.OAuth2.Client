@@ -19,7 +19,6 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  */
 class AuthorizationViewHelper extends AbstractViewHelper
 {
-
     /**
      * @Flow\Inject
      * @var UriBuilder

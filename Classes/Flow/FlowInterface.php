@@ -20,7 +20,6 @@ use Neos\Flow\Security\Authentication\TokenInterface;
  */
 interface FlowInterface
 {
-
     /**
      * @return AbstractClientToken
      */

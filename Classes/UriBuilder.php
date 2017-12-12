@@ -20,7 +20,6 @@ use Neos\Flow\Http\Uri;
  */
 class UriBuilder
 {
-
     /**
      * @Flow\Inject
      * @var ConfigurationManager

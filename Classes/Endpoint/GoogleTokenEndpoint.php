@@ -22,7 +22,6 @@ use Neos\Flow\Log\SecurityLoggerInterface;
  */
 class GoogleTokenEndpoint extends AbstractHttpTokenEndpoint implements TokenEndpointInterface
 {
-
     /**
      * @Flow\Inject
      * @var SecurityLoggerInterface

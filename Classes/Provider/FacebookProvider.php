@@ -23,7 +23,6 @@ use Neos\Flow\Security\Policy\PolicyService;
  */
 class FacebookProvider extends AbstractClientProvider
 {
-
     /**
      * @Flow\Inject
      * @var SecurityLoggerInterface

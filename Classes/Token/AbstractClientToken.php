@@ -23,7 +23,6 @@ use Neos\Flow\Security\Authentication\TokenInterface;
  */
 abstract class AbstractClientToken extends AbstractToken
 {
-
     /**
      * @Flow\Inject
      * @var \Flowpack\OAuth2\Client\Endpoint\Resolver
@@ -90,7 +89,7 @@ abstract class AbstractClientToken extends AbstractToken
         $code = $actionRequest->getArgument('code');
         $redirectUri = $this->oauthUriBuilder->getRedirectionEndpointUri($this->authenticationProviderName);
         try {
-//            $this->credentials['accessToken'] = $this->tokenEndpoint->requestAuthorizationCodeGrantAccessToken($code, $redirectUri);
+            //            $this->credentials['accessToken'] = $this->tokenEndpoint->requestAuthorizationCodeGrantAccessToken($code, $redirectUri);
             $this->credentials = $this->tokenEndpoint->requestAuthorizationCodeGrantAccessToken($code, $redirectUri);
             $this->setAuthenticationStatus(TokenInterface::AUTHENTICATION_NEEDED);
         } catch (Exception $exception) {

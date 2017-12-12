@@ -23,7 +23,6 @@ use Neos\Party\Domain\Repository\PartyRepository;
  */
 abstract class AbstractFlow implements FlowInterface
 {
-
     /**
      * @Flow\Inject
      * @var \Neos\Flow\Security\Context

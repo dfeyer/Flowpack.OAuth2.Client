@@ -20,7 +20,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  */
 class Resolver
 {
-
     /**
      * @Flow\Inject
      * @var ConfigurationManager

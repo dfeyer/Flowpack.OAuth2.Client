@@ -23,7 +23,6 @@ use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
  */
 class FacebookApiClient
 {
-
     /**
      * @var RequestEngineInterface
      */
